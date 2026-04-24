@@ -8,26 +8,52 @@ import PhotosUI
 struct OnBoardingPictureView: View {
     @StateObject private var viewModel = OnBoardingPictureViewModel()
     @Environment(\.dismiss) var dismiss
+    @ObservedObject private var coordinator: AppCoordinator
+    
+    private enum Constants {
+        static let backButtonIcon = "chevron.left"
+        static let rotateCameraIcon = "camera.rotate"
+        static let galleryIcon = "photo"
+        static let nextIcon = "chevron.right"
+        static let backButtonSize: CGFloat = 18.0
+        static let backButtonPadding: CGFloat = 8.0
+        static let progressCapsuleWidth: CGFloat = 80.0
+        static let progressCapsuleHeight: CGFloat = 4.0
+        static let activeProgressWidth: CGFloat = 40.0
+        static let controlsSpacing: CGFloat = 60.0
+    }
+    
+    public init(coordinator: AppCoordinator) {
+        self.coordinator = coordinator
+    }
     
     var body: some View {
         ZStack {
-            CameraView(session: viewModel.session)
+            if let image = viewModel.capturedImage {
+                Image(uiImage: image)
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .ignoresSafeArea()
+            } else {
+                CameraView(session: viewModel.session)
+                    .ignoresSafeArea()
+            }
             
             VStack {
                 Spacer()
                 bottomControls
             }
         }
-        .task {
-            await viewModel.startCamera()
+        .onAppear {
+            viewModel.startCamera()
         }
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
                 Button(action: { dismiss() }) {
-                    Image(systemName: "chevron.left")
-                        .font(.system(size: 18, weight: .bold))
+                    Image(systemName: Constants.backButtonIcon)
+                        .font(.system(size: Constants.backButtonSize, weight: .bold))
                         .foregroundColor(.white)
-                        .padding(8)
+                        .padding(Constants.backButtonPadding)
                         .background(Circle().fill(.black.opacity(0.3)))
                 }
             }
@@ -35,11 +61,11 @@ struct OnBoardingPictureView: View {
             ToolbarItem(placement: .principal) {
                 Capsule()
                     .fill(Color.white.opacity(0.3))
-                    .frame(width: 80, height: 4)
+                    .frame(width: Constants.progressCapsuleWidth, height: Constants.progressCapsuleHeight)
                     .overlay(
                         Capsule()
                             .fill(Color.white)
-                            .frame(width: 40, height: 4),
+                            .frame(width: Constants.activeProgressWidth, height: Constants.progressCapsuleHeight),
                         alignment: .leading
                     )
             }
@@ -52,23 +78,35 @@ struct OnBoardingPictureView: View {
 private extension OnBoardingPictureView {
     
     var bottomControls: some View {
-        HStack(spacing: 60) {
+        HStack(spacing: Constants.controlsSpacing) {
             galleryButton
             
             Button(action: { viewModel.takePhoto() }) {
                 Circle()
                     .fill(.white)
-                    .frame(width: 70, height: 70)
-                    .overlay(Circle().stroke(.white, lineWidth: 2).frame(width: 82, height: 82))
+                    .frame(width: AppConstants.Layout.shutterInnerSize, height: AppConstants.Layout.shutterInnerSize)
+                    .overlay(Circle().stroke(.white, lineWidth: 2).frame(width: AppConstants.Layout.shutterOuterSize, height: AppConstants.Layout.shutterOuterSize))
             }
             
             Button(action: { viewModel.toggleCamera() }) {
-                Image(systemName: "camera.rotate")
+                Image(systemName: Constants.rotateCameraIcon)
                     .foregroundColor(.white)
                     .font(.title2)
             }
+            
+            if viewModel.capturedImage != nil {
+                Button(action: {
+                    coordinator.navigate(to: .recordVoice)
+                }) {
+                    Image(systemName: Constants.nextIcon)
+                        .foregroundColor(.white)
+                        .font(.title2)
+                }.onAppear {
+                    viewModel.stopCamera()
+                }
+            }
         }
-        .padding(.bottom, 50)
+        .padding(.bottom, AppConstants.Spacing.bottomPaddingLarge)
     }
     
     var galleryButton: some View {
@@ -77,7 +115,7 @@ private extension OnBoardingPictureView {
             matching: .images,
             photoLibrary: .shared()
         ) {
-            Image(systemName: "photo")
+            Image(systemName: Constants.galleryIcon)
                 .foregroundColor(.white)
                 .font(.title2)
         }
@@ -86,6 +124,6 @@ private extension OnBoardingPictureView {
 
 #if targetEnvironment(simulator)
 #Preview {
-    OnBoardingPictureView()
+    OnBoardingPictureView(coordinator: .init())
 }
 #endif

@@ -5,32 +5,32 @@ import UIKit
 final class QueuePlayerView: UIView {
     private var playerLayer = AVPlayerLayer()
     private var playerLooper: AVPlayerLooper?
-
-    public init(
+    private var queuePlayer: AVQueuePlayer
+    
+    public init?(
         videoName: String,
         videoType: String
     ) {
-        super.init(frame: .zero)
-
+        
         guard let fileURL = Bundle.main.url(forResource: videoName, withExtension: videoType) else {
             print("Error: No se encontró el video \(videoName).\(videoType)")
-            return
+            return nil
         }
 
         let asset = AVAsset(url: fileURL)
         let item = AVPlayerItem(asset: asset)
         
-        let queuePlayer = AVQueuePlayer(playerItem: item)
+        queuePlayer = AVQueuePlayer(playerItem: item)
+        
+        super.init(frame: .zero)
+
         playerLayer.player = queuePlayer
         playerLayer.videoGravity = .resizeAspectFill
         layer.addSublayer(playerLayer)
-
-        playerLooper = AVPlayerLooper(player: queuePlayer, templateItem: item)
         
-        queuePlayer.play()
-        queuePlayer.isMuted = false
+        playerLooper = AVPlayerLooper(player: queuePlayer, templateItem: item)
     }
-
+    
     override func layoutSubviews() {
         super.layoutSubviews()
         playerLayer.frame = bounds
@@ -41,3 +41,14 @@ final class QueuePlayerView: UIView {
     }
 }
 
+extension QueuePlayerView {
+    
+    public func playQueuePlayer() {
+        queuePlayer.play()
+        queuePlayer.isMuted = false
+    }
+    
+    public func stopQueuePlayer() {
+        queuePlayer.pause()
+    }
+}

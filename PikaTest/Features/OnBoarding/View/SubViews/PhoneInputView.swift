@@ -10,28 +10,33 @@ import SwiftUI
 struct PhoneInputView: View {
     @Binding var phoneNumber: String
     
+    private enum Constants {
+        static let promptText = "Phone number"
+        static let stackSpacing: CGFloat = 12.0
+    }
+    
     var body: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: Constants.stackSpacing) {
             CountryCodeView()
             
             Divider()
-                .frame(height: 24)
+                .frame(height: AppConstants.Layout.dividerHeight)
             
-            TextField("", text: $phoneNumber, prompt: Text("Phone number").foregroundColor(.darkQuaternary))
+            TextField("", text: $phoneNumber, prompt: Text(Constants.promptText).foregroundColor(.darkQuaternary))
                 .keyboardType(.phonePad)
-                .font(.telkaRegular(size: 16))
+                .font(.telkaRegular(size: AppConstants.FontSizes.bodyStandard))
                 .foregroundColor(.black)
         }
-        .padding(.horizontal, 16)
-        .frame(height: 56)
-        .background(Color.white.opacity(0.9), in: RoundedRectangle(cornerRadius: 16))
-        .clipShape(RoundedRectangle(cornerRadius: 16))
-        .contentShape(RoundedRectangle(cornerRadius: 16))
+        .padding(.horizontal, AppConstants.Layout.standardCornerRadius)
+        .frame(height: AppConstants.Layout.inputHeight)
+        .background(Color.white.opacity(0.9), in: RoundedRectangle(cornerRadius: AppConstants.Layout.standardCornerRadius))
+        .clipShape(RoundedRectangle(cornerRadius: AppConstants.Layout.standardCornerRadius))
+        .contentShape(RoundedRectangle(cornerRadius: AppConstants.Layout.standardCornerRadius))
         .overlay(
-            RoundedRectangle(cornerRadius: 16)
+            RoundedRectangle(cornerRadius: AppConstants.Layout.standardCornerRadius)
                 .stroke(Color.gray.opacity(0.3), lineWidth: 1)
         )
-        .padding(.horizontal, 24)
+        .padding(.horizontal, AppConstants.Spacing.screenHorizontalPadding)
     }
 }
 

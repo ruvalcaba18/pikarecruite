@@ -1,7 +1,6 @@
 //  PikaRouteView.swift
 //  PikaTest
 //  Created by jael ruvalcaba on 23/04/26.
-
 import SwiftUI
 
 @MainActor
@@ -21,11 +20,11 @@ struct PikaRouteView: View {
     var body: some View {
         switch destination {
         case .onBoardingPicture:
-            OnBoardingPictureView()
+            OnBoardingPictureView(coordinator: coordinator)
         case .recordVoice:
-            Text("Not New")
-        case .success:
-            Text("No Now")
+            VoiceRecordingView(coordinator: coordinator)
+        case .success :
+            IAFinalCardView(coordinator: coordinator)
         }
     }
 }

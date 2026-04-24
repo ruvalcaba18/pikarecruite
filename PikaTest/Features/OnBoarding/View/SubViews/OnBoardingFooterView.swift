@@ -1,33 +1,37 @@
 import SwiftUI
 
 struct OnBoardingFooterView: View {
+    private enum Constants {
+        static let orText = "Or continue with"
+        static let agreementTextPrefix = "Sign in to agree to "
+        static let termsText = "terms"
+        static let stackSpacing: CGFloat = 24.0
+        static let separatorSpacing: CGFloat = 14.0
+        static let buttonSpacing: CGFloat = 5.0
+        static let topPadding: CGFloat = 20.0
+        static let horizontalPadding: CGFloat = 10.0
+    }
     
     var body: some View {
-        VStack(spacing: 24) {
-            HStack(spacing: 14) {
+        VStack(spacing: Constants.stackSpacing) {
+            HStack(spacing: Constants.separatorSpacing) {
                 line
-                Text("Or continue with")
-                    .font(.telkaRegular(size: 16))
+                Text(Constants.orText)
+                    .font(.telkaRegular(size: AppConstants.FontSizes.bodyStandard))
                     .foregroundStyle(Color.darkQuaternary)
                 line
             }
-            .padding(.horizontal, 10)
+            .padding(.horizontal, Constants.horizontalPadding)
 
-            HStack(spacing: 5) {
-                PrimaryButtonView(icon: "applelogo") {
-                    
-                }
-                
-                PrimaryButtonView(icon: "envelope.fill") {
-                    
-                }
+            HStack(spacing: Constants.buttonSpacing) {
+                PrimaryButtonView(icon: "applelogo") {}
+                PrimaryButtonView(icon: "envelope.fill") {}
             }
             
-            Text("Sign in to agree to \(Text("terms").foregroundStyle(Color.darkQuaternary).bold())")
-                .font(.telkaRegular(size: 14))
+            Text("\(Constants.agreementTextPrefix)\(Text(Constants.termsText).foregroundStyle(Color.darkQuaternary).bold())")
+                .font(.telkaRegular(size: AppConstants.FontSizes.captionSmall))
                 .foregroundStyle(Color.darkQuaternary)
-                .padding(.top, 20)
-                .frame(alignment: .bottom)
+                .padding(.top, Constants.topPadding)
         }
     }
 }

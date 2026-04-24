@@ -3,6 +3,12 @@ import SwiftUI
 struct OnBoardingView: View {
     @StateObject private var viewModel = OnBoardingViewModel()
     @ObservedObject private var coordinator: AppCoordinator
+    @State private var isVideoPlaying = true
+    
+    private enum Constants {
+        static let continueButtonTitle = "Continue"
+        static let stackSpacing: CGFloat = 12.0
+    }
     
     public init(coordinator: AppCoordinator) {
         self.coordinator = coordinator
@@ -10,27 +16,33 @@ struct OnBoardingView: View {
     
     var body: some View {
         ZStack {
-            OnBoardingHeroView(viewModel: viewModel)
-                .allowsHitTesting(false)
+            OnBoardingHeroView(
+                viewModel: viewModel,
+                isPlaying: $isVideoPlaying
+            )
+            .allowsHitTesting(false)
             
-            VStack(spacing: 12) {
+            VStack(spacing: Constants.stackSpacing) {
                 Spacer()
                 
                 OnBoardingTextBlockView()
                 
                 PhoneInputView(phoneNumber: $viewModel.phoneNumber)
                 
-                PrimaryButtonView(title: "Continue") {
-                    
+                PrimaryButtonView(title: Constants.continueButtonTitle) {
                     if !viewModel.phoneNumber.isEmpty {
-                        print("This is executed correctly")
                         coordinator.navigate(to: .onBoardingPicture)
                     }
                 }
                 
                 OnBoardingFooterView()
             }
-           
+        }
+        .onAppear {
+            isVideoPlaying = true
+        }
+        .onDisappear {
+            isVideoPlaying = false
         }
     }
 }

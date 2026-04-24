@@ -1,8 +1,6 @@
 //  OnBoardingPictureViewModel.swift
 //  PikaTest
 //  Created by jael ruvalcaba on 23/04/26.
-
-
 import Foundation
 import Combine
 import AVFoundation
@@ -17,7 +15,19 @@ final class OnBoardingPictureViewModel: NSObject, ObservableObject {
     @Published var imageSelection: PhotosPickerItem? {
         didSet {
             if let imageSelection {
-                loadTransferable(from: imageSelection)
+                Task {
+                    do {
+                        if let data = try await imageSelection.loadTransferable(type: Data.self),
+                           let image = UIImage(data: data) {
+                            await MainActor.run {
+                                self.capturedImage = self.fixOrientation(image)
+                                self.stopCamera()
+                            }
+                        }
+                    } catch {
+                        print("Error loading gallery image: \(error)")
+                    }
+                }
             }
         }
     }
@@ -28,24 +38,23 @@ final class OnBoardingPictureViewModel: NSObject, ObservableObject {
         cameraService.session
     }
     
-    func startCamera() async {
-        let granted = await cameraService.checkPermissions()
-        
-        guard granted else {
-            print("Camera access denied")
-            return
-        }
-        
-        do {
-            try cameraService.setupSession(isFront: self.isFrontCamera)
-            cameraService.start()
+    func startCamera() {
+        Task {
+            let granted = await cameraService.checkPermissions()
+            guard granted else { return }
             
-            await MainActor.run {
-                self.isSessionRunning = true
+            do {
+                try cameraService.setupSession(isFront: self.isFrontCamera)
+                
+                DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+                    self?.cameraService.start()
+                    DispatchQueue.main.async {
+                        self?.isSessionRunning = true
+                    }
+                }
+            } catch {
+                print("Failed to setup camera session: \(error)")
             }
-            
-        } catch {
-            print("Failed to setup camera session: \(error)")
         }
     }
     
@@ -56,15 +65,22 @@ final class OnBoardingPictureViewModel: NSObject, ObservableObject {
     
     func toggleCamera() {
         isFrontCamera.toggle()
-        do {
-            try cameraService.setupSession(isFront: self.isFrontCamera)
-        } catch {
-            print("Failed to switch camera: \(error)")
-        }
+        startCamera()
     }
     
     func takePhoto() {
         cameraService.capturePhoto(delegate: self)
+    }
+    
+    private func fixOrientation(_ image: UIImage) -> UIImage {
+        if image.imageOrientation == .up { return image }
+        
+        UIGraphicsBeginImageContextWithOptions(image.size, false, image.scale)
+        image.draw(in: CGRect(origin: .zero, size: image.size))
+        let normalizedImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        
+        return normalizedImage ?? image
     }
 }
 
@@ -89,19 +105,17 @@ extension OnBoardingPictureViewModel: AVCapturePhotoCaptureDelegate {
 
 private extension OnBoardingPictureViewModel {
     
-     func loadTransferable(from item: PhotosPickerItem) {
-        Task {
-            do {
-                if let data = try await item.loadTransferable(type: Data.self),
-                   let image = UIImage(data: data) {
-                    
-                    await MainActor.run {
-                        self.capturedImage = image
-                    }
+    func loadTransferable(from item: PhotosPickerItem) async {
+        do {
+            if let data = try await item.loadTransferable(type: Data.self),
+               let image = UIImage(data: data) {
+                
+                await MainActor.run {
+                    self.capturedImage = image
                 }
-            } catch {
-                print("Error loading image: \(error)")
             }
+        } catch {
+            print("Error loading image: \(error)")
         }
     }
 }

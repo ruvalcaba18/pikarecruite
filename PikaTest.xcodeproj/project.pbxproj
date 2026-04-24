@@ -29,6 +29,23 @@
 		2BFC7DC72F9ABED300ECC814 /* PikaTestUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PikaTestUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		2BFC7DDC2F9ABEE200ECC814 /* Exceptions for "PikaTestUITests" folder in "PikaTest" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				README.md,
+			);
+			target = 2BFC7DAF2F9ABED200ECC814 /* PikaTest */;
+		};
+		2BFC7DDD2F9ABEE200ECC814 /* Exceptions for "PikaTestUITests" folder in "PikaTestUITests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				README.md,
+			);
+			target = 2BFC7DC62F9ABED300ECC814 /* PikaTestUITests */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		2BFC7DB22F9ABED200ECC814 /* PikaTest */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
@@ -42,6 +59,10 @@
 		};
 		2BFC7DCA2F9ABED300ECC814 /* PikaTestUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				2BFC7DDC2F9ABEE200ECC814 /* Exceptions for "PikaTestUITests" folder in "PikaTest" target */,
+				2BFC7DDD2F9ABEE200ECC814 /* Exceptions for "PikaTestUITests" folder in "PikaTestUITests" target */,
+			);
 			path = PikaTestUITests;
 			sourceTree = "<group>";
 		};
@@ -400,6 +421,7 @@
 				DEVELOPMENT_TEAM = J58ZDFPQ77;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Necesitamos acceso a la cámara para que puedas tomarte la foto de perfil.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -432,6 +454,7 @@
 				DEVELOPMENT_TEAM = J58ZDFPQ77;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Necesitamos acceso a la cámara para que puedas tomarte la foto de perfil.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

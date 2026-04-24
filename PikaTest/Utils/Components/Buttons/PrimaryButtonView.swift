@@ -1,10 +1,6 @@
-//
 //  PrimaryButtonView.swift
 //  PikaTest
-//
 //  Created by jael ruvalcaba on 23/04/26.
-//
-
 import SwiftUI
 
 struct PrimaryButtonView: View {
@@ -36,13 +32,13 @@ private extension PrimaryButtonView {
      var content: some View {
         if let title = title, !title.isEmpty {
             Text(title)
-                .font(.telkaMedium(size: 18))
+                .font(.telkaMedium(size: AppConstants.FontSizes.bodyStandard))
                 .foregroundColor(.black)
                 .frame(maxWidth: .infinity)
-                .frame(height: 56)
+                .frame(height: AppConstants.Layout.buttonHeight)
                 .background(Color.continueButtonBackground)
-                .cornerRadius(16)
-                .contentShape(RoundedRectangle(cornerRadius: 16)) // Hace que todo el botón sea clickable
+                .cornerRadius(AppConstants.Layout.standardCornerRadius)
+                .contentShape(RoundedRectangle(cornerRadius: AppConstants.Layout.standardCornerRadius)) // Hace que todo el botón sea clickable
             
         } else if let icon = icon, !icon.isEmpty {
             Image(systemName: icon)

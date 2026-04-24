@@ -13,4 +13,8 @@ final class AppCoordinator: ObservableObject {
     func navigate(to route: AppRoute) {
         path.append(route)
     }
+    
+    func popToMain() {
+        path = NavigationPath()
+    }
 }
